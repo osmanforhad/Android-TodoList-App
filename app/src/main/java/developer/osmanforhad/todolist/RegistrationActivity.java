@@ -1,15 +1,24 @@
 package developer.osmanforhad.todolist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -18,6 +27,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText registerEmail, registerPassword;
     private Button registerButton;
     private TextView registerQuestion;
+    private FirebaseAuth mAuth;
+    private ProgressDialog loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +45,8 @@ public class RegistrationActivity extends AppCompatActivity {
         registerPassword = (EditText) findViewById(R.id.registrationPassword);
         registerButton = (Button) findViewById(R.id.registrationButton);
         registerQuestion = (TextView) findViewById(R.id.registrationPageQuestion);
+        mAuth = (FirebaseAuth) FirebaseAuth.getInstance();
+        loader = (ProgressDialog) new ProgressDialog(this);
 
         //__Setup Toolbar as Actionbar__//
         setSupportActionBar(toolbar);
@@ -48,6 +61,57 @@ public class RegistrationActivity extends AppCompatActivity {
                 Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        //__Setup Click Event in to the Register Button__//
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //__Get User input and Convert to String with trim those input__//
+                String email = registerEmail.getText().toString().trim();
+                String password = registerPassword.getText().toString().trim();
+
+                //__Validation Setup__//
+                if(TextUtils.isEmpty(email)){
+                    registerEmail.setError("email is required");
+                    return;
+                }
+                if(TextUtils.isEmpty(password)){
+                    registerEmail.setError("password is required");
+                    return;
+                }
+                else {
+                    //__Setup Progress Dialog bar__//
+                    loader.setMessage("Registration in progress");
+                    loader.setCanceledOnTouchOutside(false);
+                    loader.show();
+
+                    //__setup User register functionality__//
+                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()){
+                                //__GO to Next Screen__//
+                                Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                                //__Cancel the Loader Dialog__//
+                                loader.dismiss();
+                            }
+                            else {
+                                //__Catch Error Exception__//
+                                String error = task.getException().toString();
+                                //__show Error Message__??
+                                Toast.makeText(RegistrationActivity.this, "Registration failed" + error, Toast.LENGTH_SHORT).show();
+                                //__Cancel the Loader Dialog__//
+                                loader.dismiss();
+                            }
+
+                        }
+                    });
+                }
+
             }
         });
 
