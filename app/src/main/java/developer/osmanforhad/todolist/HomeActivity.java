@@ -6,11 +6,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -18,6 +23,14 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
+    private DatabaseReference reference;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+    private String onlineUserID;
+    private ProgressDialog loader;
+    private String key = "";
+    private String task;
+    private String description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +47,9 @@ public class HomeActivity extends AppCompatActivity {
         //__Setup App Screen Title inside the app actionbar__//
          getSupportActionBar().setTitle("Todo List App");
 
+         //__Firebase Auth setup__//
+        mAuth = FirebaseAuth.getInstance();
+
          //__Setup Linear Layout Manager Object__//
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
@@ -42,6 +58,15 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         //__Setup RecyclerView Layout as Linear Layout__//
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        //__Setup Loading Progress Dialog__//
+        loader = new ProgressDialog(this);
+
+        //__Find current loggedIn User__//
+        mUser = mAuth.getCurrentUser();
+        onlineUserID = mUser.getUid();
+        //__Saved current loggedIn user input in the tasks table__//
+        reference = FirebaseDatabase.getInstance().getReference().child("tasks").child(onlineUserID);
 
         //__Setup Click event in to the Floating Action Button__//
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
