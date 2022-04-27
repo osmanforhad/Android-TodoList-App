@@ -82,7 +82,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    //__Setup Progress Dialog bar__//
+                    //__Initial the Progress Dialog bar__//
                     loader.setMessage("Registration in progress");
                     loader.setCanceledOnTouchOutside(false);
                     loader.show();
@@ -91,7 +91,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()){
+                            if(task.isSuccessful()){
                                 //__GO to Next Screen__//
                                 Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                                 startActivity(intent);

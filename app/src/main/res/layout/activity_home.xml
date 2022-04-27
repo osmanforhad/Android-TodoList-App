@@ -5,11 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background_design"
     tools:context=".HomeActivity">
 
-    <TextView
-        android:text="Home Screen"
+    <androidx.appcompat.widget.Toolbar
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:id="@+id/homeToolbar"
+        android:background="#ED6425"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:backgroundTint="#FFF"
+            android:src="@drawable/ic_add_24"
+            android:layout_margin="10dp"
+            android:id="@+id/fab"
+            android:layout_gravity="bottom|end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 
 </LinearLayout>
